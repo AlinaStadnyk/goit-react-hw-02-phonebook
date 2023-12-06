@@ -15,6 +15,7 @@ class Form extends Component {
     event.preventDefault();
 
     this.props.sendUserData(this.state);
+    console.log(this.state);
     this.setState({
       name: '',
       number: '',
