@@ -1,35 +1,45 @@
 import { Component } from 'react';
 import Form from './Form';
+import ContactList from './ContactList';
+import { nanoid } from 'nanoid';
+import Notiflix from 'notiflix';
 export class App extends Component {
   state = {
     contacts: [],
-    name: '',
-    number: '',
+    filter: '',
   };
-  handleChange = ({ target: { value, name } }) => {
-    this.setState({
-      [name]: value,
-    });
+  sendUserData = data => {
+    const newUser = {
+      ...data,
+      id: nanoid(),
+    };
+    const isDuplicated = this.state.contacts.find(el => el.name === data.name);
+    if (isDuplicated) {
+      return Notiflix.Notify.failure(`${data.name} is already in contacts`);
+    }
+    this.setState(prev => ({
+      contacts: [...prev.contacts, newUser],
+    }));
   };
-  handleSubmit = event => {
-    event.preventDefault();
-    console.log(this.state);
+  handleDelete = id => {
+    this.setState(prev => ({
+      contacts: prev.contacts.filter(el => el.id !== id),
+    }));
   };
+
   render() {
     return (
       <div>
         <h1>Phonebook</h1>
 
-        <Form
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          name={this.state.name}
-          number={this.state.number}
-        />
+        <Form sendUserData={this.sendUserData} />
 
-        {/* <h2>Contacts</h2>
-  <Filter ... />
-  <ContactList ... /> */}
+        <h2>Contacts</h2>
+
+        <ContactList
+          list={this.state.contacts}
+          handleDelete={this.handleDelete}
+        />
       </div>
     );
   }
