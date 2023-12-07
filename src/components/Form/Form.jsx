@@ -32,7 +32,7 @@ class Form extends Component {
             type="text"
             name="name"
             required
-            value={this.name}
+            value={this.state.name}
             onChange={this.handleChange}
           />
         </li>
@@ -43,7 +43,7 @@ class Form extends Component {
             type="tel"
             name="number"
             required
-            value={this.number}
+            value={this.state.number}
             onChange={this.handleChange}
           />
         </li>
