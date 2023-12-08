@@ -11,12 +11,31 @@ export class App extends Component {
     contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const localData = localStorage.getItem('contacts');
+    if (localData) {
+      this.setState({
+        contacts: JSON.parse(localData),
+      });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    console.log(prevState.contacts.length);
+
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   sendUserData = data => {
     const newUser = {
       ...data,
       id: nanoid(),
     };
-    const isDuplicated = this.state.contacts.find(el => el.name === data.name);
+    const isDuplicated = this.state.contacts.find(
+      el => el.name.toLowerCase() === data.name.toLowerCase()
+    );
     if (isDuplicated) {
       return Notiflix.Notify.failure(`${data.name} is already in contacts`);
     }
@@ -52,11 +71,12 @@ export class App extends Component {
           value={this.filter}
         />
         <h2 className={css.title}>Contacts</h2>
-
-        <ContactList
-          list={this.getFilteredContacts()}
-          handleDelete={this.handleDelete}
-        />
+        {this.state.contacts.length > 0 && (
+          <ContactList
+            list={this.getFilteredContacts()}
+            handleDelete={this.handleDelete}
+          />
+        )}
       </div>
     );
   }
